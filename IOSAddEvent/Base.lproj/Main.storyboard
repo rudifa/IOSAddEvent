@@ -29,10 +29,10 @@
                                     <color key="titleColor" red="0.70588237050000002" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
-                                    <action selector="addResaBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vZe-Di-2uT"/>
+                                    <action selector="addEventBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="vZe-Di-2uT"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bnG-6X-IR4">
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bnG-6X-IR4">
                                 <rect key="frame" x="103.5" y="493" width="207" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="30" id="CGL-ye-UB5"/>

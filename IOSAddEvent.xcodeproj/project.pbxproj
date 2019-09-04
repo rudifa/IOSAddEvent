@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9DD68BBE231F087100620F54 /* DebugUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD68BBD231F087100620F54 /* DebugUtil.swift */; };
+		9DF50F352321000D002F865A /* CalEventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF50F342321000D002F865A /* CalEventManager.swift */; };
 		EAFF4B9122DA6EBF004F406B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFF4B9022DA6EBF004F406B /* AppDelegate.swift */; };
 		EAFF4B9322DA6EBF004F406B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFF4B9222DA6EBF004F406B /* ViewController.swift */; };
 		EAFF4B9622DA6EBF004F406B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EAFF4B9422DA6EBF004F406B /* Main.storyboard */; };
@@ -15,6 +17,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		9DD68BBD231F087100620F54 /* DebugUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugUtil.swift; sourceTree = "<group>"; };
+		9DD68BBF231FA38000620F54 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		9DF50F342321000D002F865A /* CalEventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalEventManager.swift; sourceTree = "<group>"; };
 		EAFF4B8D22DA6EBF004F406B /* IOSAddEvent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOSAddEvent.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAFF4B9022DA6EBF004F406B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EAFF4B9222DA6EBF004F406B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -35,10 +40,40 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9DD68BBC231F084E00620F54 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				9DD68BBD231F087100620F54 /* DebugUtil.swift */,
+			);
+			path = Util;
+			sourceTree = "<group>";
+		};
+		9DD68BC0231FC19A00620F54 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				EAFF4B9022DA6EBF004F406B /* AppDelegate.swift */,
+				EAFF4B9422DA6EBF004F406B /* Main.storyboard */,
+				EAFF4B9922DA6EC1004F406B /* LaunchScreen.storyboard */,
+				EAFF4B9722DA6EC1004F406B /* Assets.xcassets */,
+			);
+			name = App;
+			sourceTree = "<group>";
+		};
+		9DD68BC1231FC1CA00620F54 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				EAFF4B9222DA6EBF004F406B /* ViewController.swift */,
+				9DF50F342321000D002F865A /* CalEventManager.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
 		EAFF4B8422DA6EBF004F406B = {
 			isa = PBXGroup;
 			children = (
+				9DD68BBF231FA38000620F54 /* README.md */,
 				EAFF4B8F22DA6EBF004F406B /* IOSAddEvent */,
+				9DD68BBC231F084E00620F54 /* Util */,
 				EAFF4B8E22DA6EBF004F406B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,11 +89,8 @@
 		EAFF4B8F22DA6EBF004F406B /* IOSAddEvent */ = {
 			isa = PBXGroup;
 			children = (
-				EAFF4B9022DA6EBF004F406B /* AppDelegate.swift */,
-				EAFF4B9222DA6EBF004F406B /* ViewController.swift */,
-				EAFF4B9422DA6EBF004F406B /* Main.storyboard */,
-				EAFF4B9722DA6EC1004F406B /* Assets.xcassets */,
-				EAFF4B9922DA6EC1004F406B /* LaunchScreen.storyboard */,
+				9DD68BC0231FC19A00620F54 /* App */,
+				9DD68BC1231FC1CA00620F54 /* Controller */,
 				EAFF4B9C22DA6EC1004F406B /* Info.plist */,
 			);
 			path = IOSAddEvent;
@@ -136,7 +168,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				EAFF4B9322DA6EBF004F406B /* ViewController.swift in Sources */,
+				9DF50F352321000D002F865A /* CalEventManager.swift in Sources */,
 				EAFF4B9122DA6EBF004F406B /* AppDelegate.swift in Sources */,
+				9DD68BBE231F087100620F54 /* DebugUtil.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,69 +10,79 @@ import EventKit
 import UIKit
 
 class ViewController: UIViewController {
-    var userName = "ep" // EP'S
+    var userName = "rf" // EP'S
 
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
-    @IBAction func addResaBtnPressed(_ sender: Any) {
-        // 1
-        let eventStore = EKEventStore()
+    @IBAction func addEventBtnPressed(_: Any) {
+        let calEventManager = CalEventManager()
+        calEventManager.insertCalEvent(userName: "rf+1", calendarTitle: "Code_Cal") { result in
+            var message = ""
+            switch result {
+            case let .success(event):
+                self.printClassAndFunc(info: "success: \(event.brief)")
+                message = "\(event.brief)"
+                break
+            case let .failure(error):
+                self.printClassAndFunc(info: "error: \(error)")
+                message = "Error: \(error)"
+                break
+            }
 
-        // 2
+            let alert = UIAlertController(title: "Add event", message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+            self.present(alert, animated: true)
+        }
+    }
+
+    @IBAction func addEventBtnPressed_0(_: Any) {
+        let eventStore = EKEventStore()
         switch EKEventStore.authorizationStatus(for: .event) {
         case .authorized:
-            self.insertEvent(store: eventStore)
+            insertEvent(store: eventStore)
         case .denied:
-            print("Access denied")
+            printClassAndFunc(info: "Access denied")
         case .notDetermined:
-            // 3
             eventStore.requestAccess(to: .event, completion: { [weak self] (granted: Bool, _: Error?) -> Void in
                 if granted {
                     self!.insertEvent(store: eventStore)
                 } else {
-                    print("Access denied")
+                    self?.printClassAndFunc(info: "Access denied")
                 }
             })
         default:
-            print("Case default")
+            printClassAndFunc(info: "Case default")
         }
     }
 
     func insertEvent(store: EKEventStore) {
-        // 1
         let calendars = store.calendars(for: .event)
 
         for calendar in calendars {
-            // 2
-            print("\(calendar.title)")
+//            printClassAndFunc(info: "Calendar\(calendar.title)")
             if calendar.title == "Code_Cal" {
-                // 3
                 let startDate = Date()
-                // 1 hours
                 let endDate = startDate.addingTimeInterval(1 * 60 * 60)
-
-                // 4
                 let event = EKEvent(eventStore: store)
                 event.calendar = calendar
 
                 event.title = userName // EP
                 event.startDate = startDate
                 event.endDate = endDate
-
-                // 5
                 do {
                     try store.save(event, span: .thisEvent)
                 } catch {
-                    print("Error saving event in calendar") }
+                    printClassAndFunc(info: "Error saving event in calendar")
+                }
             }
         }
     }
 
     // EP's Try
 
-    @IBAction func addCalBtnPressed(_ sender: Any) {
+    @IBAction func addCalBtnPressed(_: Any) {
         // Create an Event Store instance
         let eventStore = EKEventStore()
 
@@ -98,13 +108,13 @@ class ViewController: UIViewController {
         do {
             try eventStore.saveCalendar(newCalendar, commit: true)
             UserDefaults.standard.set(newCalendar.calendarIdentifier, forKey: "EventTrackerPrimaryCalendar")
-            self.navigationController?.popViewController(animated: true)
+            navigationController?.popViewController(animated: true)
             // self.dismiss(animated: true, completion: nil)
         } catch {
             let alert = UIAlertController(title: "Calendar could not save", message: (error as NSError).localizedDescription, preferredStyle: .alert)
             let OKAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             alert.addAction(OKAction)
-            self.navigationController?.popViewController(animated: true)
+            navigationController?.popViewController(animated: true)
             // self.present(alert, animated: true, completion: nil)
         }
     }
