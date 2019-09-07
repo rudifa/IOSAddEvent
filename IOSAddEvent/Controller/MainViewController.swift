@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainViewController.swift
 //  IOSAddEvent
 //
 //  Created by Eric PAJOT on 13.07.19.
@@ -9,27 +9,56 @@
 import EventKit
 import UIKit
 
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
     var userName = "rf" // EP'S
 
     @IBOutlet var calendarSelector: UITextField!
 
     let calEventManager = CalEventManager()
+    var selectedCalendarTitle = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let calendarTitles = calEventManager.getCalendars().map({ $0.title })
-        calendarSelector.loadDropdownData(data: calendarTitles, selectionHandler: { calendarTitle in
-            self.printClassAndFunc(info: "selected: \(calendarTitle)")
-        })
+        calendarSelector.loadDropdownData(data: calendarTitles, selectionHandler: onSelect)
+    }
+
+    override func shouldPerformSegue(withIdentifier identifier: String, sender _: Any?) -> Bool {
+        if identifier == "segueToCalEventsTableViewController" {
+            guard calEventManager.getCalendar(title: selectedCalendarTitle) != nil else {
+                printClassAndFunc(info: "calendar \(selectedCalendarTitle) not found")
+                return false
+            }
+            printClassAndFunc(info: "calendar \(selectedCalendarTitle) found")
+            return true
+        }
+        return false
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender _: Any?) {
+        if segue.identifier == "segueToCalEventsTableViewController" {
+            let destination = segue.destination as! CalEventsTableViewController
+            guard let calendar = calEventManager.getCalendar(title: selectedCalendarTitle) else { return }
+            let events = calEventManager.getEvents(calendar: calendar)
+            destination.eventStringData = events.map({ $0.brief })
+            destination.title = selectedCalendarTitle
+        }
     }
 
     func onSelect(selectedText: String) {
         printClassAndFunc(info: "selected: \(selectedText)")
+        selectedCalendarTitle = selectedText
     }
-    @IBOutlet weak var calendarTitle: UITextField!
-    
+
+    @IBOutlet var calendarTitle: UITextField!
+
+    @IBAction func showEvents(_: Any) {}
+
+    @IBAction func unwindSegueToMainViewController(_: UIStoryboardSegue) {
+        printClassAndFunc(info: "unwind segue")
+    }
+
     @IBAction func addEventBtnPressed(_: Any) {
         let calEventManager = CalEventManager()
         calEventManager.insertCalEvent(userName: "rf+1", calendarTitle: "Code_Cal") { result in

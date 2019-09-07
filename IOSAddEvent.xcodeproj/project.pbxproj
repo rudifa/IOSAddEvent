@@ -8,10 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		9D69FB7B23252B64006E1C55 /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D69FB7A23252B64006E1C55 /* PickerView.swift */; };
+		9D69FB7F232587C2006E1C55 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D69FB7E232587C2006E1C55 /* MainViewController.swift */; };
+		9D69FB8723259224006E1C55 /* CalEventsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D69FB8623259224006E1C55 /* CalEventsTableViewController.swift */; };
 		9DD68BBE231F087100620F54 /* DebugUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD68BBD231F087100620F54 /* DebugUtil.swift */; };
 		9DF50F352321000D002F865A /* CalEventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF50F342321000D002F865A /* CalEventManager.swift */; };
 		EAFF4B9122DA6EBF004F406B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFF4B9022DA6EBF004F406B /* AppDelegate.swift */; };
-		EAFF4B9322DA6EBF004F406B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAFF4B9222DA6EBF004F406B /* ViewController.swift */; };
 		EAFF4B9622DA6EBF004F406B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EAFF4B9422DA6EBF004F406B /* Main.storyboard */; };
 		EAFF4B9822DA6EC1004F406B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EAFF4B9722DA6EC1004F406B /* Assets.xcassets */; };
 		EAFF4B9B22DA6EC1004F406B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EAFF4B9922DA6EC1004F406B /* LaunchScreen.storyboard */; };
@@ -19,12 +20,13 @@
 
 /* Begin PBXFileReference section */
 		9D69FB7A23252B64006E1C55 /* PickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerView.swift; sourceTree = "<group>"; };
+		9D69FB7E232587C2006E1C55 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		9D69FB8623259224006E1C55 /* CalEventsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalEventsTableViewController.swift; sourceTree = "<group>"; };
 		9DD68BBD231F087100620F54 /* DebugUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DebugUtil.swift; sourceTree = "<group>"; };
 		9DD68BBF231FA38000620F54 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		9DF50F342321000D002F865A /* CalEventManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalEventManager.swift; sourceTree = "<group>"; };
 		EAFF4B8D22DA6EBF004F406B /* IOSAddEvent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IOSAddEvent.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EAFF4B9022DA6EBF004F406B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		EAFF4B9222DA6EBF004F406B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		EAFF4B9522DA6EBF004F406B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		EAFF4B9722DA6EC1004F406B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EAFF4B9A22DA6EC1004F406B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -58,6 +60,15 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		9D69FB8123258800006E1C55 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				9D69FB7E232587C2006E1C55 /* MainViewController.swift */,
+				9D69FB8623259224006E1C55 /* CalEventsTableViewController.swift */,
+			);
+			path = Controller;
+			sourceTree = "<group>";
+		};
 		9DD68BBC231F084E00620F54 /* Util */ = {
 			isa = PBXGroup;
 			children = (
@@ -76,14 +87,6 @@
 				EAFF4B9722DA6EC1004F406B /* Assets.xcassets */,
 			);
 			name = App;
-			sourceTree = "<group>";
-		};
-		9DD68BC1231FC1CA00620F54 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				EAFF4B9222DA6EBF004F406B /* ViewController.swift */,
-			);
-			name = Controller;
 			sourceTree = "<group>";
 		};
 		EAFF4B8422DA6EBF004F406B = {
@@ -107,7 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				9DD68BC0231FC19A00620F54 /* App */,
-				9DD68BC1231FC1CA00620F54 /* Controller */,
+				9D69FB8123258800006E1C55 /* Controller */,
 				9D69FB78232502C0006E1C55 /* Manager */,
 				9DD68BBC231F084E00620F54 /* Util */,
 				9D69FB79232502D8006E1C55 /* View */,
@@ -186,9 +189,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EAFF4B9322DA6EBF004F406B /* ViewController.swift in Sources */,
 				9DF50F352321000D002F865A /* CalEventManager.swift in Sources */,
 				EAFF4B9122DA6EBF004F406B /* AppDelegate.swift in Sources */,
+				9D69FB7F232587C2006E1C55 /* MainViewController.swift in Sources */,
+				9D69FB8723259224006E1C55 /* CalEventsTableViewController.swift in Sources */,
 				9D69FB7B23252B64006E1C55 /* PickerView.swift in Sources */,
 				9DD68BBE231F087100620F54 /* DebugUtil.swift in Sources */,
 			);

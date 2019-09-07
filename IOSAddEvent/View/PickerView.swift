@@ -46,6 +46,7 @@ class PickerView: UIPickerView {
 
     init(pickerData: [String], dropdownField: UITextField) {
         super.init(frame: .zero)
+        printClassAndFunc(info: "")
 
         self.pickerData = pickerData
         pickerTextField = dropdownField
@@ -76,6 +77,7 @@ class PickerView: UIPickerView {
             if pickerData.count > 0 {
                 self.pickerTextField.text = self.pickerData[0]
                 self.pickerTextField.isEnabled = true
+                onSelect(self.pickerTextField.text!)
             } else {
                 self.pickerTextField.text = nil
                 self.pickerTextField.isEnabled = false
