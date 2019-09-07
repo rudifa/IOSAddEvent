@@ -12,10 +12,24 @@ import UIKit
 class ViewController: UIViewController {
     var userName = "rf" // EP'S
 
+    @IBOutlet var calendarSelector: UITextField!
+
+    let calEventManager = CalEventManager()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        let calendarTitles = calEventManager.getCalendars().map({ $0.title })
+        calendarSelector.loadDropdownData(data: calendarTitles, selectionHandler: { calendarTitle in
+            self.printClassAndFunc(info: "selected: \(calendarTitle)")
+        })
     }
 
+    func onSelect(selectedText: String) {
+        printClassAndFunc(info: "selected: \(selectedText)")
+    }
+    @IBOutlet weak var calendarTitle: UITextField!
+    
     @IBAction func addEventBtnPressed(_: Any) {
         let calEventManager = CalEventManager()
         calEventManager.insertCalEvent(userName: "rf+1", calendarTitle: "Code_Cal") { result in
@@ -30,10 +44,11 @@ class ViewController: UIViewController {
                 message = "Error: \(error)"
                 break
             }
-
-            let alert = UIAlertController(title: "Add event", message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            self.present(alert, animated: true)
+            DispatchQueue.main.async {
+                let alert = UIAlertController(title: "Add event", message: message, preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true)
+            }
         }
     }
 

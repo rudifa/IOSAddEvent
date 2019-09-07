@@ -44,16 +44,44 @@
                                     <action selector="addCalBtnPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yj7-jm-14U"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="16" translatesAutoresizingMaskIntoConstraints="NO" id="39T-uB-dTE">
+                                <rect key="frame" x="16" y="68" width="382" height="30"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Calendar" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3b2-NK-uhM">
+                                        <rect key="frame" x="0.0" y="0.0" width="122" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="BTN-iy-PoU" userLabel="Calendar Selector">
+                                        <rect key="frame" x="138" y="0.0" width="244" height="30"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="3b2-NK-uhM" firstAttribute="width" secondItem="BTN-iy-PoU" secondAttribute="width" multiplier="0.5" id="Iuu-DV-1RD"/>
+                                </constraints>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="bnG-6X-IR4" firstAttribute="top" secondItem="8EF-oR-UAn" secondAttribute="bottom" constant="30" id="5Cy-qo-Q3A"/>
+                            <constraint firstItem="39T-uB-dTE" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="24" id="8Sl-3S-uZ4"/>
                             <constraint firstItem="8EF-oR-UAn" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="DhB-jh-IeK"/>
                             <constraint firstItem="8EF-oR-UAn" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="O9m-6P-sV5"/>
+                            <constraint firstItem="39T-uB-dTE" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="QpA-8W-Fd6"/>
+                            <constraint firstItem="39T-uB-dTE" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ScZ-NH-SS8"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="39T-uB-dTE" secondAttribute="trailing" constant="16" id="hde-Ui-SdT"/>
                             <constraint firstItem="bnG-6X-IR4" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="u7Y-vs-Dev"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="x9H-FN-fuw" secondAttribute="trailing" constant="16" id="vwn-2s-KLX"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="calendarSelector" destination="BTN-iy-PoU" id="35c-ix-aV6"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
