@@ -46,7 +46,7 @@ class CalEventManager: NSObject {
 
 //    override init() {
 //        super.init()
-////        updateAuthorization()
+    ////        updateAuthorization()
 //    }
 
 //    func updateAuthorization() {
@@ -98,6 +98,7 @@ class CalEventManager: NSObject {
             completion(.failure(.unknownError))
         }
     }
+
 //
 //    fileprivate func printCalTitles(_ store: EKEventStore) {
 //        let calendars = store.calendars(for: .event)
@@ -168,7 +169,7 @@ class CalEventManager: NSObject {
     /// Note: returns events within the year 2109, for now
     ///
     /// - Parameter calendar: target calendar
-    func loadEvents(calendar: EKCalendar) {
+    func getEvents(calendar: EKCalendar) -> [EKEvent] {
         // Create a date formatter instance to use for converting a string to a date
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -190,10 +191,11 @@ class CalEventManager: NSObject {
             }
 
             printClassAndFunc(info: "events.count=\(events.count)")
-            printClassAndFunc(info: "events.count=\(events[0])")
             for event in events {
-                print(event.brief)
+                printClassAndFunc(info: "events.count=\(event.brief)")
             }
+            return events
         }
+        return []
     }
 }
