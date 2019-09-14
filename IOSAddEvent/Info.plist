@@ -43,5 +43,9 @@
 	</array>
 	<key>NSCalendarsUsageDescription</key>
 	<string>This application needs to access the calendar</string>
+	<key>NSContactsUsageDescription</key>
+	<string>This application needs to access the calendar</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>This application needs to access the calendar</string>
 </dict>
 </plist>
