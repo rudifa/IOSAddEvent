@@ -42,7 +42,6 @@ class MainViewController: UIViewController {
             guard let calendar = calEventManager.getCalendar(title: selectedCalendarTitle) else { return }
             let events = calEventManager.getEvents(calendar: calendar)
             destination.eventStringData = events.map({ $0.brief })
-            destination.title = selectedCalendarTitle
         }
     }
 
