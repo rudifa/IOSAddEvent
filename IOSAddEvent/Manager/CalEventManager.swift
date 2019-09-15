@@ -148,7 +148,9 @@ class CalEventManager: NSObject {
     ///
     /// - Returns: calendars in the event store
     func getCalendars() -> [EKCalendar] {
-        return eventStore.calendars(for: .event)
+        let calendars = eventStore.calendars(for: .event)
+        printClassAndFunc(info: "calendars.count=\(calendars.count)")
+        return calendars
     }
 
     /// Find calendar by its title
