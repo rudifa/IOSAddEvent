@@ -14,14 +14,23 @@ class MainViewController: UIViewController {
 
     @IBOutlet var calendarSelector: UITextField!
 
-    let calEventManager = CalEventManager()
+    let calEventManager = CalEventManager.shared
     var selectedCalendarTitle = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let calendarTitles = calEventManager.getCalendars().map({ $0.title })
-        calendarSelector.loadDropdownData(data: calendarTitles, selectionHandler: onSelect)
+        calEventManager.getAllCalendars { result in
+            switch result {
+            case let .success(calendars):
+                DispatchQueue.main.async {
+                    let calendarTitles = calendars.map({ $0.title })
+                    self.calendarSelector.loadDropdownData(data: calendarTitles, selectionHandler: self.onSelect)
+                }
+            case let .failure(error):
+                self.printClassAndFunc(info: "getAllCalendars error: \(error)")
+            }
+        }
     }
 
     override func shouldPerformSegue(withIdentifier identifier: String, sender _: Any?) -> Bool {
@@ -37,11 +46,18 @@ class MainViewController: UIViewController {
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender _: Any?) {
+        printClassAndFunc(info: "segue.identifier \(String(describing: segue.identifier))")
         if segue.identifier == "segueToCalEventsTableViewController" {
             let destination = segue.destination as! CalEventsTableViewController
-            guard let calendar = calEventManager.getCalendar(title: selectedCalendarTitle) else { return }
-            let events = calEventManager.getEvents(calendar: calendar)
-            destination.eventStringData = events.map({ $0.brief })
+            calEventManager.getEventsFromCalendar(title: selectedCalendarTitle) { result in
+                switch result {
+                case let .success(events):
+                    self.printClassAndFunc(info: "events.count= \(events.count)")
+                    destination.eventStringData = events.map({ $0.brief })
+                case let .failure(error):
+                    self.printClassAndFunc(info: "error \(error)")
+                }
+            }
         }
     }
 
@@ -59,7 +75,7 @@ class MainViewController: UIViewController {
     }
 
     @IBAction func addEventBtnPressed(_: Any) {
-        let calEventManager = CalEventManager()
+        let calEventManager = CalEventManager.shared
         calEventManager.insertCalEvent(userName: "rf+1", calendarTitle: "Code_Cal") { result in
             var message = ""
             switch result {
