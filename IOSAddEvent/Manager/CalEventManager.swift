@@ -49,8 +49,181 @@ class CalEventManager: NSObject {
 
     private override init() {
         super.init()
-        updateAuthorization()
+//        updateAuthorization()
     }
+
+    // MARK: - new style methods, using execute block
+
+    private func getAuthorization(completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        switch EKEventStore.authorizationStatus(for: .event) {
+        case .authorized:
+            completion(.success(true))
+        case .denied:
+            completion(.failure(.accessDenied))
+        case .notDetermined:
+            eventStore.requestAccess(to: .event) { (granted: Bool, _: Error?) -> Void in
+                if granted {
+                    completion(.success(true))
+                } else {
+                    completion(.failure(.accessDenied))
+                }
+            }
+        default:
+            completion(.failure(.unknownError))
+        }
+    }
+
+    /// Test authorization
+    ///
+    /// - Parameter completion: reports success or failure of getAuthorization
+    func checkAuthorization(completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        execute({
+            self.printClassAndFunc(info: "Hello there, just checking authorization")
+            completion(.success(true))
+        }) {
+            result in
+            switch result {
+            case let .success(ok):
+                self.printClassAndFunc(info: "\(ok)")
+            case let .failure(error):
+                self.printClassAndFunc(info: "\(error)")
+            }
+        }
+    }
+
+    /// Find all calendars known to the event store
+    ///
+    /// - Parameter completion: reports a Result containing the calendars or an error
+    func getCalendars(completion: @escaping ((Result<[EKCalendar], CalEventError>) -> Void)) {
+        execute({
+            let calendars = self.eventStore.calendars(for: .event)
+            self.printClassAndFunc(info: "calendars.count=\(calendars.count)")
+            completion(.success(calendars))
+        }) {
+            result in
+            switch result {
+            case let .success(ok):
+                self.printClassAndFunc(info: "\(ok)")
+            case let .failure(error):
+                self.printClassAndFunc(info: "\(error)")
+            }
+        }
+    }
+
+    /// Find calendar by its title
+    ///
+    /// - Parameters:
+    ///   - title: calendar ttle
+    ///   - completion: reports a Result containing the calendar or an error
+    func getCalendar(title: String, completion: @escaping ((Result<EKCalendar, CalEventError>) -> Void)) {
+        // getCalendars makes sure that we are authorized
+        getCalendars { result in
+            switch result {
+            case let .success(calendars):
+                self.printClassAndFunc(info: "calendars: \(calendars.map({ $0.title }))")
+                if let calendar = calendars.filter({ $0.title == title }).first {
+                    completion(.success(calendar))
+                } else {
+                    completion(.failure(.calendarNotFound))
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    /// Get events from calendar
+    ///
+    /// - Parameter title: calendar title
+    ///   - completion: reports a Result containing the events or an error
+    func getEventsFrom(calendar title: String, completion: @escaping ((Result<[EKEvent], CalEventError>) -> Void)) {
+        // getCalendar -> getCalendars makes sure that we are authorized
+        getCalendar(title: title) { result in
+            switch result {
+            case let .success(calendar):
+                let events = self.getEvents(calendar: calendar)
+                completion(.success(events))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    /// Insert event into calendar
+    ///
+    /// - Parameters:
+    ///   - userName: user name
+    ///   - calendarTitle: calendar title, e.g. "Code_Cal"
+    func addEvent(title: String, into calendar: String, completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        printClassAndFunc(info: ">")
+        getCalendar(title: calendar) { result in
+            switch result {
+            case let .success(calendar):
+                self.execute({
+                    let event = EKEvent(eventStore: self.eventStore)
+                    event.calendar = calendar
+                    event.title = title
+                    event.startDate = Date()
+                    event.endDate = event.startDate.addingTimeInterval(2 * 60 * 60)
+                    do {
+                        try self.eventStore.save(event, span: .thisEvent) // FAILS
+                        completion(.success(true))
+                    } catch {
+                        completion(.failure(.failedToSaveEventInCalendar))
+                    }
+                }) { result in
+                    switch result {
+                    case let .success(ok):
+                        self.printClassAndFunc(info: "\(ok)")
+                    case let .failure(error):
+                        self.printClassAndFunc(info: "\(error)")
+                    }
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - new style authorization helpers
+
+    /// Executes the code block (closure) iff the authorization is available
+    ///
+    /// - Parameters:
+    ///   - block: code to execute
+    ///   - completion: reports a Result containing the success or an error
+    private func execute(_ block: @escaping (() -> Void), completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        getAuthorization { result in
+            switch result {
+            case .success:
+                block()
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    /// Executes the code block (closure) that may throw, iff the authorization is available
+    ///
+    /// - Parameters:
+    ///   - block: code to execute
+    ///   - completion: reports a Result containing the success or an error
+    private func executeAndThrow(_ block: @escaping (() throws -> Void), completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        getAuthorization { result in
+            switch result {
+            case .success:
+                do {
+                    try block()
+                } catch {
+                    completion(.failure(.unknownError))
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - old style methods
 
     private func updateAuthorization() {
         switch EKEventStore.authorizationStatus(for: .event) {
@@ -76,21 +249,21 @@ class CalEventManager: NSObject {
         }
     }
 
-    private func getEventsFromCalendarAuthorized(title: String, callback: ((Result<[EKEvent], CalEventError>) -> Void)) {
+    private func getEventsFromCalendarAuthorized(title: String, completion: ((Result<[EKEvent], CalEventError>) -> Void)) {
         guard let calendar = getCalendar(title: title) else {
 //            printClassAndFunc(info: "*** calendar \(title) not found")
-            callback(.failure(.calendarNotFound))
+            completion(.failure(.calendarNotFound))
             return
         }
         printClassAndFunc(info: "calendar \(title) found")
         let events = getEvents(calendar: calendar)
-        callback(.success(events))
+        completion(.success(events))
     }
 
-    /// Gets events from calendar and adds to bookings a booking for each event
+    /// Gets events from calendar
     ///
     /// - Parameter title: calendar title
-    func getEventsFromCalendar(title: String, callback: @escaping ((Result<[EKEvent], CalEventError>) -> Void)) {
+    func getEventsFromCalendar(title: String, completion: @escaping ((Result<[EKEvent], CalEventError>) -> Void)) {
         getAllCalendars { result in
             switch result {
             case let .success(calendars):
@@ -101,14 +274,14 @@ class CalEventManager: NSObject {
                     self.printClassAndFunc(info: "calendar \(calendar.title) found")
                     let events = self.getEvents(calendar: calendar)
                     self.printClassAndFunc(info: "events.count= \(events.count)")
-                    callback(.success(events))
+                    completion(.success(events))
                 } else {
                     self.printClassAndFunc(info: "calendar \(title) not found")
-                    callback(.failure(.calendarNotFound))
+                    completion(.failure(.calendarNotFound))
                 }
             case let .failure(error):
                 self.printClassAndFunc(info: "error= \(error)")
-                callback(.failure(error))
+                completion(.failure(error))
             }
         }
     }
