@@ -38,6 +38,8 @@ class CalEventsTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "eventCell", for: indexPath)
 
         cell.textLabel?.text = eventStringData?[indexPath.row]
+        cell.textLabel?.font = .systemFont(ofSize: 12)
+        cell.textLabel?.numberOfLines = 0
 
         return cell
     }
