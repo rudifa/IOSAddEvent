@@ -10,7 +10,7 @@ import EventKit
 import UIKit
 
 class MainViewController: UIViewController {
-    var userName = "rf add event"
+    var userName = "from IOSAddEvent app"
 
     @IBOutlet var calendarSelector: UITextField!
 
@@ -63,8 +63,8 @@ class MainViewController: UIViewController {
     }
 
     @IBAction func addEventBtnPressed(_: Any) {
-        let calEventManager = CalEventManager.shared
-        calEventManager.addEvent(title: userName, into: "Code_Cal") { result in
+        let event = CalEventManager.shared.eventStore.makeEvent(title: userName)
+        calEventManager.addEvent(event: event, into: "Code_Cal") { result in
             var message = ""
             switch result {
             case .success:

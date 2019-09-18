@@ -7,9 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9D19861923313F3300071E7D /* IOSAddEventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D19861823313F3300071E7D /* IOSAddEventTests.swift */; };
+		9D19861923313F3300071E7D /* CalEventManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D19861823313F3300071E7D /* CalEventManagerTests.swift */; };
 		9D19862023313F9800071E7D /* CalEventManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DF50F342321000D002F865A /* CalEventManager.swift */; };
 		9D1986212331426300071E7D /* DebugUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DD68BBD231F087100620F54 /* DebugUtil.swift */; };
+		9D198623233227C100071E7D /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D198622233227C100071E7D /* DateUtil.swift */; };
+		9D19862423323AF100071E7D /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D198622233227C100071E7D /* DateUtil.swift */; };
+		9D1986262332572200071E7D /* CalEventManagerMoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D1986252332572200071E7D /* CalEventManagerMoreTests.swift */; };
 		9D69FB7B23252B64006E1C55 /* PickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D69FB7A23252B64006E1C55 /* PickerView.swift */; };
 		9D69FB7F232587C2006E1C55 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D69FB7E232587C2006E1C55 /* MainViewController.swift */; };
 		9D69FB8723259224006E1C55 /* CalEventsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D69FB8623259224006E1C55 /* CalEventsTableViewController.swift */; };
@@ -33,8 +36,10 @@
 
 /* Begin PBXFileReference section */
 		9D19861623313F3300071E7D /* IOSAddEventTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IOSAddEventTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9D19861823313F3300071E7D /* IOSAddEventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOSAddEventTests.swift; sourceTree = "<group>"; };
+		9D19861823313F3300071E7D /* CalEventManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalEventManagerTests.swift; sourceTree = "<group>"; };
 		9D19861A23313F3300071E7D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9D198622233227C100071E7D /* DateUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
+		9D1986252332572200071E7D /* CalEventManagerMoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalEventManagerMoreTests.swift; sourceTree = "<group>"; };
 		9D69FB7A23252B64006E1C55 /* PickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerView.swift; sourceTree = "<group>"; };
 		9D69FB7E232587C2006E1C55 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		9D69FB8623259224006E1C55 /* CalEventsTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalEventsTableViewController.swift; sourceTree = "<group>"; };
@@ -70,7 +75,8 @@
 		9D19861723313F3300071E7D /* IOSAddEventTests */ = {
 			isa = PBXGroup;
 			children = (
-				9D19861823313F3300071E7D /* IOSAddEventTests.swift */,
+				9D19861823313F3300071E7D /* CalEventManagerTests.swift */,
+				9D1986252332572200071E7D /* CalEventManagerMoreTests.swift */,
 				9D19861A23313F3300071E7D /* Info.plist */,
 			);
 			path = IOSAddEventTests;
@@ -104,6 +110,7 @@
 		9DD68BBC231F084E00620F54 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				9D198622233227C100071E7D /* DateUtil.swift */,
 				9DD68BBD231F087100620F54 /* DebugUtil.swift */,
 			);
 			path = Util;
@@ -253,7 +260,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9D19861923313F3300071E7D /* IOSAddEventTests.swift in Sources */,
+				9D19861923313F3300071E7D /* CalEventManagerTests.swift in Sources */,
+				9D1986262332572200071E7D /* CalEventManagerMoreTests.swift in Sources */,
+				9D19862423323AF100071E7D /* DateUtil.swift in Sources */,
 				9D19862023313F9800071E7D /* CalEventManager.swift in Sources */,
 				9D1986212331426300071E7D /* DebugUtil.swift in Sources */,
 			);
@@ -269,6 +278,7 @@
 				9D69FB8723259224006E1C55 /* CalEventsTableViewController.swift in Sources */,
 				9D69FB7B23252B64006E1C55 /* PickerView.swift in Sources */,
 				9DD68BBE231F087100620F54 /* DebugUtil.swift in Sources */,
+				9D198623233227C100071E7D /* DateUtil.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

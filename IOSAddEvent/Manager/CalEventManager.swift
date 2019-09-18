@@ -1,5 +1,5 @@
 //
-//  CalEventManager.swift v.0.3.0
+//  CalEventManager.swift v.0.3.1
 //  IOSAddEvent
 //
 //  Created by Rudolf Farkas on 05.09.19.
@@ -8,7 +8,7 @@
 
 import EventKit
 
-extension EKAuthorizationStatus: CustomStringConvertible {
+extension EKAuthorizationStatus {
     public var description: String {
         switch self {
         case .notDetermined: return "notDetermined"
@@ -27,16 +27,29 @@ enum CalEventError: Error {
     case noEventsFoundInCalendar
     case failedToSaveEventInCalendar
     case unknownError
+    case unexpectedError
+    case thrownErrorCaught
+    case expectedFailure // for teesting
 }
 
 extension EKEvent {
     var brief: String {
         var brf = ""
         if title != nil { brf += title }
-        if startDate != nil { brf += " \(startDate!)" }
-        if endDate != nil { brf += " to \(endDate!)" }
+        if startDate != nil { brf += " \(startDate!.EEEE_ddMMyyyy_HHmmss)" }
+        if endDate != nil { brf += " to \(endDate!.EEEE_ddMMyyyy_HHmmss)" }
         if calendar != nil { brf += " in \(calendar!.title)" }
         return "\(brf)"
+    }
+}
+
+extension EKEventStore {
+    func makeEvent(title: String, startDate: Date = Date(), endDate: Date = Date().incremented(by: .hour, times: 1)) -> EKEvent {
+        let event = EKEvent(eventStore: self)
+        event.title = title
+        event.startDate = startDate
+        event.endDate = endDate
+        return event
     }
 }
 
@@ -44,17 +57,21 @@ extension EKEvent {
 class CalEventManager: NSObject {
     static let shared = CalEventManager()
 
-    var eventStore = EKEventStore()
-    var authorized = false
+    let eventStore = EKEventStore()
+
+    var AUTHORIZATION_DENIED_FOR_TESTING = false
 
     private override init() {
         super.init()
-//        updateAuthorization()
     }
 
     // MARK: - new style methods, using execute block
 
     private func getAuthorization(completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        if AUTHORIZATION_DENIED_FOR_TESTING {
+            completion(.failure(.accessDenied))
+            return
+        }
         switch EKEventStore.authorizationStatus(for: .event) {
         case .authorized:
             completion(.success(true))
@@ -73,39 +90,19 @@ class CalEventManager: NSObject {
         }
     }
 
-    /// Test authorization
-    ///
-    /// - Parameter completion: reports success or failure of getAuthorization
-    func checkAuthorization(completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
-        execute({
-            self.printClassAndFunc(info: "Hello there, just checking authorization")
-            completion(.success(true))
-        }) {
-            result in
-            switch result {
-            case let .success(ok):
-                self.printClassAndFunc(info: "\(ok)")
-            case let .failure(error):
-                self.printClassAndFunc(info: "\(error)")
-            }
-        }
-    }
-
     /// Find all calendars known to the event store
     ///
     /// - Parameter completion: reports a Result containing the calendars or an error
     func getCalendars(completion: @escaping ((Result<[EKCalendar], CalEventError>) -> Void)) {
-        execute({
+        execute(block: {
             let calendars = self.eventStore.calendars(for: .event)
-            self.printClassAndFunc(info: "calendars.count=\(calendars.count)")
             completion(.success(calendars))
-        }) {
-            result in
+        }) { result in
             switch result {
-            case let .success(ok):
-                self.printClassAndFunc(info: "\(ok)")
+            case .success:
+                completion(.failure(.unexpectedError))
             case let .failure(error):
-                self.printClassAndFunc(info: "\(error)")
+                completion(.failure(error))
             }
         }
     }
@@ -149,80 +146,6 @@ class CalEventManager: NSObject {
         }
     }
 
-    /// Insert event into calendar
-    ///
-    /// - Parameters:
-    ///   - userName: user name
-    ///   - calendarTitle: calendar title, e.g. "Code_Cal"
-    func addEvent(title: String, into calendar: String, completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
-        printClassAndFunc(info: ">")
-        getCalendar(title: calendar) { result in
-            switch result {
-            case let .success(calendar):
-                self.execute({
-                    let event = EKEvent(eventStore: self.eventStore)
-                    event.calendar = calendar
-                    event.title = title
-                    event.startDate = Date()
-                    event.endDate = event.startDate.addingTimeInterval(2 * 60 * 60)
-                    do {
-                        try self.eventStore.save(event, span: .thisEvent) // FAILS
-                        completion(.success(true))
-                    } catch {
-                        completion(.failure(.failedToSaveEventInCalendar))
-                    }
-                }) { result in
-                    switch result {
-                    case let .success(ok):
-                        self.printClassAndFunc(info: "\(ok)")
-                    case let .failure(error):
-                        self.printClassAndFunc(info: "\(error)")
-                    }
-                }
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    // MARK: - new style authorization helpers
-
-    /// Executes the code block (closure) iff the authorization is available
-    ///
-    /// - Parameters:
-    ///   - block: code to execute
-    ///   - completion: reports a Result containing the success or an error
-    private func execute(_ block: @escaping (() -> Void), completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
-        getAuthorization { result in
-            switch result {
-            case .success:
-                block()
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    /// Executes the code block (closure) that may throw, iff the authorization is available
-    ///
-    /// - Parameters:
-    ///   - block: code to execute
-    ///   - completion: reports a Result containing the success or an error
-    private func executeAndThrow(_ block: @escaping (() throws -> Void), completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
-        getAuthorization { result in
-            switch result {
-            case .success:
-                do {
-                    try block()
-                } catch {
-                    completion(.failure(.unknownError))
-                }
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
     // MARK: - old style methods reused
 
     /// Load events from calendar
@@ -246,10 +169,154 @@ class CalEventManager: NSObject {
             // Use the configured NSPredicate to find and return events in the store that match
             let events = eventStore.events(matching: eventsPredicate).sorted {
                 (e1: EKEvent, e2: EKEvent) -> Bool in
-                return e1.startDate.compare(e2.startDate) == ComparisonResult.orderedAscending
+                return e1.startDate.compare(e2.startDate) == ComparisonResult.orderedDescending
             }
             return events
         }
         return []
+    }
+
+    // TODO: PHASE OUT THIS METHOD
+    /// Insert event into calendar
+    ///
+    /// - Parameters:
+    ///   - title: event title
+    ///   - calendarTitled: calendar title, e.g. "Code_Cal"
+    func addEvent(title: String, into calendarTitled: String, completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        printClassAndFunc(info: ">")
+        let event = EKEvent(eventStore: eventStore)
+        event.title = title
+        event.startDate = Date()
+        event.endDate = event.startDate.addingTimeInterval(2 * 60 * 60)
+        addEvent(event: event, into: calendarTitled, completion: completion)
+    }
+
+    /// Insert event into calendar
+    ///
+    /// - Parameters:
+    ///   - event: event to add
+    ///   - calendarTitled: target calendar title
+    ///   - completion: reports success or error
+    func addEvent(event: EKEvent, into calendarTitled: String, completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        printClassAndFunc(info: ">")
+        getCalendar(title: calendarTitled) { getCalResult in
+            switch getCalResult {
+            case let .success(calendar):
+                self.execute(block: {
+                    event.calendar = calendar
+                    do {
+                        try self.eventStore.save(event, span: .thisEvent)
+                        completion(.success(true))
+                    } catch {
+                        completion(.failure(.failedToSaveEventInCalendar))
+                    }
+                }) { execResult in
+                    switch execResult {
+                    case let .success(ok):
+                        self.printClassAndFunc(info: "execResult: \(ok)")
+                    case let .failure(error):
+                        self.printClassAndFunc(info: "execResult: \(error)")
+                    }
+                }
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - new style authorization helpers
+
+    /// Executes the code block (closure) iff the authorization is available
+    ///
+    /// - Parameters:
+    ///   - block: code to execute
+    ///   - completion: reports a Result containing the success or an error
+    private func execute(block: @escaping (() -> Void), completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        getAuthorization { authorizationResult in
+            switch authorizationResult {
+            case .success:
+                block()
+            case let .failure(authorizationError):
+                completion(.failure(authorizationError))
+            }
+        }
+    }
+
+    /// Executes the code block (closure) that may throw, iff the authorization is available
+    ///
+    /// - Parameters:
+    ///   - block: code to execute
+    ///   - completion: reports a Result containing the success or an error
+    private func executeAndThrow(block: @escaping (() throws -> Void), completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        getAuthorization { authorizationResult in
+            switch authorizationResult {
+            case .success:
+                do {
+                    try block()
+                } catch {
+                    completion(.failure(.thrownErrorCaught))
+                }
+            case let .failure(authorizationError):
+                completion(.failure(authorizationError))
+            }
+        }
+    }
+
+    // MARK: - for use in unit tests only
+
+    /// Test authorization
+    ///
+    /// - Parameter completion: reports success or failure of getAuthorization
+    func checkAuthorization_testCase(completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        execute(block: {
+            self.printClassAndFunc(info: "Hello there, just checking authorization")
+            completion(.success(true))
+        }) {
+            result in completion(result)
+        }
+    }
+
+    /// Test case for unit tests - code in block may succeed or fail
+    ///
+    /// - Parameters:
+    ///   - input: "fail!" or any
+    ///   - completion: reports success or failure
+    func execute_testCase(input: String, completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        CalEventManager.shared.execute(block: {
+            switch input {
+            case "fail!":
+                completion(.failure(.expectedFailure))
+            default:
+                completion(.success(true))
+            }
+        }) {
+            // pass on the result - it may contain an authorization failure
+            result in completion(result)
+        }
+    }
+
+    /// Test case for unit tests - code in block may succeed, fail or throw
+    ///
+    /// - Parameters:
+    ///   - input: "fail!", "throw!" or any
+    ///   - completion: reports success or failure
+    func executeAndThrow_testCase(input: String, completion: @escaping ((Result<Bool, CalEventError>) -> Void)) {
+        func throwAlways() throws {
+            throw CalEventError.unknownError
+        }
+
+        CalEventManager.shared.executeAndThrow(block: {
+            switch input {
+            case "fail!":
+                completion(.failure(.expectedFailure))
+            case "throw!":
+                try throwAlways()
+            default:
+                completion(.success(true))
+            }
+        }) {
+            // pass on the result - it may contain an authorization failure
+            result in completion(result)
+        }
     }
 }
